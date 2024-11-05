@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 // Separate class for the Restart Button
+//hello
 public class RestartButton extends JButton {
 
     public GamePanel gamePanel;
@@ -14,7 +15,7 @@ public class RestartButton extends JButton {
         this.gamePanel = gamePanel;  // Reference to the game panel
 
         // Set properties for the rectangular button
-        this.setFont(new Font("SansSerif", Font.PLAIN, 15));  // Set the font
+        this.setFont(new Font("SansSerif", Font.PLAIN, 15 ));  // Set the font
         this.setFocusable(false);  // Disable focus on the button
         this.setBackground(Color.LIGHT_GRAY);  // Set background color
         this.setForeground(Color.BLACK);  // Set text color

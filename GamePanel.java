@@ -1,3 +1,4 @@
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -17,7 +18,8 @@ public class GamePanel extends JPanel implements ActionListener{
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 20;
     static final int GAME_UNITS = (SCREEN_HEIGHT*SCREEN_WIDTH)/UNIT_SIZE;
-    static final int DELAY = 150; //higher the delay,slower the game
+    static final int DELAY = 10; //higher the delay,slower the game
+    static int highScore = 0;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     int bodyParts = 6;
@@ -28,7 +30,7 @@ public class GamePanel extends JPanel implements ActionListener{
     boolean running = false;
     Timer timer;
     Random random;
-    //RestartButton restartButton;
+    JButton restartButton;
 
     GamePanel(){
         random = new Random();
@@ -36,8 +38,16 @@ public class GamePanel extends JPanel implements ActionListener{
         this.setBackground(Color.black);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
-        startGame();
+        
 
+        restartButton = new JButton("Restart");
+        restartButton.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        restartButton.setFocusable(false);
+        restartButton.setVisible(false);  // Hide it initially
+        restartButton.addActionListener(e -> startGame());
+        this.add(restartButton);  // Add button to panel
+
+        startGame();
     }
 
     public void startGame(){
@@ -45,6 +55,7 @@ public class GamePanel extends JPanel implements ActionListener{
         running = true;
         timer = new Timer(DELAY,this);
         timer.start();
+        //restartButton.setVisible(false);
     }
 
     public void paintComponent(Graphics g){
@@ -82,6 +93,13 @@ public class GamePanel extends JPanel implements ActionListener{
             g.setFont(new Font("SansSerif",Font.PLAIN,15));
             FontMetrics metrics = getFontMetrics(g.getFont());
             g.drawString("SCORE: "+applesEaten,(SCREEN_WIDTH - metrics.stringWidth("SCORE: "+applesEaten))/2, g.getFont().getSize());
+
+            g.setColor(Color.lightGray);
+            g.setFont(new Font("SansSerif", Font.PLAIN, 15));
+            FontMetrics metrics3 = getFontMetrics(g.getFont());
+            g.drawString("HIGHSCORE: " + highScore, 
+            (SCREEN_WIDTH - metrics3.stringWidth("HIGHSCORE: " + highScore)) / 2, 
+            g.getFont().getSize() + 20); // Adjust Y position if necessary
         }
         else{
             gameOver(g);
@@ -155,6 +173,10 @@ public class GamePanel extends JPanel implements ActionListener{
         }
 
         if(!running){
+
+            if(applesEaten>highScore){
+                highScore = applesEaten;
+            }
             timer.stop();
         }
     }
@@ -167,30 +189,17 @@ public class GamePanel extends JPanel implements ActionListener{
         g.drawString("GAME OVER",(SCREEN_WIDTH - metrics1.stringWidth("GAME OVER"))/2, SCREEN_HEIGHT/2);
 
         g.setColor(Color.lightGray);
-            g.setFont(new Font("SansSerif",Font.PLAIN,15));
-            FontMetrics metrics2 = getFontMetrics(g.getFont());
-            g.drawString("SCORE: "+applesEaten,(SCREEN_WIDTH - metrics2.stringWidth("SCORE: "+applesEaten))/2, g.getFont().getSize());
+        g.setFont(new Font("SansSerif",Font.PLAIN,15));
+        FontMetrics metrics2 = getFontMetrics(g.getFont());
+        g.drawString("SCORE: "+applesEaten,(SCREEN_WIDTH - metrics2.stringWidth("SCORE: "+applesEaten))/2, g.getFont().getSize()); 
 
-        /*if(restartButton == null){// Create and display the Restart button
-            RestartButton restartButton = new RestartButton(this);  // Pass GamePanel reference to RestartButton
-            this.setLayout(null);  // Use absolute layout
-            this.add(restartButton);  // Add the button to the game panel
-            this.repaint();  // Refresh the screen to show the button
-        } */  
+        g.setColor(Color.lightGray);
+        g.setFont(new Font("SansSerif",Font.PLAIN,15));
+        FontMetrics metrics3 = getFontMetrics(g.getFont());
+        g.drawString("HIGHSCORE: "+highScore,(SCREEN_WIDTH - metrics2.stringWidth("HIGHSCORE: "+highScore))/2, g.getFont().getSize()+20); 
+
+        restartButton.setVisible(true);
     }
-
-    /*public void restartGame() {
-        // Reset game variables and start the game again
-        bodyParts = 6;
-        applesEaten = 0;
-        direction = 'R';
-        running = true;
-        newApple();
-        timer.start();  // Restart the timer
-        this.remove(restartButton);  // Remove the restart button
-        repaint();  // Repaint the screen for the new game
-
-    }*/
 
     public void actionPerformed(ActionEvent e){
         if(running){
